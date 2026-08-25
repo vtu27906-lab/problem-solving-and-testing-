@@ -1,0 +1,144 @@
+import java.util.*;
+
+class Driver {
+    String name;
+
+    Driver(String name) {
+        this.name = name;
+    }
+}
+
+class Rider {
+    String name;
+
+    Rider(String name) {
+        this.name = name;
+    }
+}
+
+class Vehicle {
+    String vehicleNumber;
+
+    Vehicle(String vehicleNumber) {
+        this.vehicleNumber = vehicleNumber;
+    }
+}
+
+// Abstract class for different ride types
+abstract class Ride {
+    abstract double calculateFare(double distance);
+}
+
+// Bike ride
+class Bike extends Ride {
+    @Override
+    double calculateFare(double distance) {
+        return distance * 5;
+    }
+}
+
+// Auto ride
+class Auto extends Ride {
+    @Override
+    double calculateFare(double distance) {
+        return distance * 12;
+    }
+}
+
+// Cab ride
+class Cab extends Ride {
+    @Override
+    double calculateFare(double distance) {
+        return distance * 12;
+    }
+}
+
+class InvalidBookingException extends Exception {
+    InvalidBookingException(String message) {
+        super(message);
+    }
+}
+
+class Trip {
+    Rider rider;
+    Driver driver;
+    Vehicle vehicle;
+    Ride ride;
+
+    Trip(Rider rider, Driver driver, Vehicle vehicle, Ride ride)
+            throws InvalidBookingException {
+
+        if (rider == null || driver == null ||
+            vehicle == null || ride == null) {
+            throw new InvalidBookingException("Invalid booking");
+        }
+
+        this.rider = rider;
+        this.driver = driver;
+        this.vehicle = vehicle;
+        this.ride = ride;
+    }
+
+    double getFare(double distance) throws InvalidBookingException {
+        if (distance <= 0) {
+            throw new InvalidBookingException("Invalid distance");
+        }
+
+        return ride.calculateFare(distance);
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        int n = sc.nextInt();
+
+        Rider rider = new Rider("Rider1");
+        Driver driver = new Driver("Driver1");
+        Vehicle vehicle = new Vehicle("TN01AB1234");
+
+        for (int i = 0; i < n; i++) {
+            String rideType = sc.next();
+            double distance = sc.nextDouble();
+
+            Ride ride;
+
+            switch (rideType.toLowerCase()) {
+                case "bike":
+                    ride = new Bike();
+                    break;
+
+                case "auto":
+                    ride = new Auto();
+                    break;
+
+                case "cab":
+                    ride = new Cab();
+                    break;
+
+                default:
+                    System.out.println("Invalid booking");
+                    continue;
+            }
+
+            try {
+                Trip trip = new Trip(rider, driver, vehicle, ride);
+
+                double fare = trip.getFare(distance);
+
+                // Print as integer when appropriate
+                if (fare == (int) fare) {
+                    System.out.println((int) fare);
+                } else {
+                    System.out.println(fare);
+                }
+
+            } catch (InvalidBookingException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+
+        sc.close();
+    }
+}

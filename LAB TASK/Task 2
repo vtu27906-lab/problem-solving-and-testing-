@@ -1,0 +1,84 @@
+import java.util.*;
+
+public class Main {
+
+    static class SensorData {
+        double sum;
+        int count;
+
+        SensorData(double temperature) {
+            sum = temperature;
+            count = 1;
+        }
+
+        void add(double temperature) {
+            sum += temperature;
+            count++;
+        }
+
+        double average() {
+            return sum / count;
+        }
+    }
+
+    static class SensorResult {
+        String id;
+        double average;
+
+        SensorResult(String id, double average) {
+            this.id = id;
+            this.average = average;
+        }
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        int n = sc.nextInt();
+
+        Map<String, SensorData> map = new HashMap<>();
+
+        for (int i = 0; i < n; i++) {
+            String sensorId = sc.next();
+            double temperature = sc.nextDouble();
+
+            // Filter temperatures greater than 50
+            if (temperature > 50) {
+                if (map.containsKey(sensorId)) {
+                    map.get(sensorId).add(temperature);
+                } else {
+                    map.put(sensorId, new SensorData(temperature));
+                }
+            }
+        }
+
+        List<SensorResult> results = new ArrayList<>();
+
+        for (Map.Entry<String, SensorData> entry : map.entrySet()) {
+            results.add(
+                new SensorResult(
+                    entry.getKey(),
+                    entry.getValue().average()
+                )
+            );
+        }
+
+        // Sort by average temperature descending
+        results.sort((a, b) -> {
+            int compare = Double.compare(b.average, a.average);
+
+            // Optional tie-breaker: sensor ID
+            if (compare == 0) {
+                return a.id.compareTo(b.id);
+            }
+
+            return compare;
+        });
+
+        for (SensorResult result : results) {
+            System.out.printf("%s %.1f%n", result.id, result.average);
+        }
+
+        sc.close();
+    }
+}

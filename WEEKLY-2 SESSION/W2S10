@@ -1,0 +1,41 @@
+import java.util.*;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        int N = sc.nextInt();
+        int M = sc.nextInt();
+
+        int[] arr = new int[N];
+
+        for (int i = 0; i < N; i++) {
+            arr[i] = sc.nextInt();
+        }
+
+        HashMap<Integer, Integer> map = new HashMap<>();
+
+        // First window
+        for (int i = 0; i < M; i++) {
+            map.put(arr[i], map.getOrDefault(arr[i], 0) + 1);
+        }
+
+        int maxDistinct = map.size();
+
+        // Sliding window
+        for (int i = M; i < N; i++) {
+            map.put(arr[i], map.getOrDefault(arr[i], 0) + 1);
+
+            int old = arr[i - M];
+            map.put(old, map.get(old) - 1);
+
+            if (map.get(old) == 0) {
+                map.remove(old);
+            }
+
+            maxDistinct = Math.max(maxDistinct, map.size());
+        }
+
+        System.out.println(maxDistinct);
+    }
+}
